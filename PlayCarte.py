@@ -40,12 +40,12 @@ def GetCartById(listCart,cartId):
             return item        
 def CanHeEatChoosenCarts(pickedCart,ListCartsToEat):
     sumPowerOfToEatCart =0
-    for item in ListCartsToEat:
-        sumPowerOfToEatCart=sumPowerOfToEatCart+item.Power
-    if(sumPowerOfToEatCart==pickedCart.Power):
-        return True
-    else : 
-        return False
+    if(pickedCart!=None and ListCartsToEat!=[None]):
+        for item in ListCartsToEat:
+            sumPowerOfToEatCart=sumPowerOfToEatCart+item.Power
+        if(sumPowerOfToEatCart==pickedCart.Power):
+            return True
+    return False
 def EatCarts(cartsForTable,carts_player,winnings_player,pickedCart,ListCartsToEat):
     winnings_player.append(pickedCart)
     winnings_player+=ListCartsToEat
@@ -56,7 +56,10 @@ def EatCarts(cartsForTable,carts_player,winnings_player,pickedCart,ListCartsToEa
 def OnePlayerTour(cartsForTable,carts_player,winnings_player,PlayerName):
     PickedCartId = functions.GetOnlyIntInput(f"{PlayerName}- picker une carte (par ID)")
     PickedCart = GetCartById(carts_player,PickedCartId)
-   
+    while(PickedCart==None):
+        PickedCartId = functions.GetOnlyIntInput(f"---Id n'existe pas!---{PlayerName}- picker une carte (par ID)")
+        PickedCart = GetCartById(carts_player,PickedCartId)
+        
     CartsIdToEat_str = input(f"{PlayerName}- choisir les cartes a monger separe par vergule (par ID) :")
     if(CartsIdToEat_str!=''):
         ListCartsIdToEat =CartsIdToEat_str.split(",")
@@ -117,19 +120,21 @@ def LastEatedTakeAllCartsOnTable(Game):
 def Evaluation(Game):
     scoreP1=0
     scoreP2=0
+    PrintCarts(Game.winnings_player1,"********[Les cartes Gagants J1]")    
+    PrintCarts(Game.winnings_player2,"********[Les cartes Gagants J2]")
     # nbr carts
-    Game.EvaluationPlayer1.NbrCarts=Game.winnings_player1
-    Game.EvaluationPlayer2.NbrCarts=Game.winnings_player2
+    Game.EvaluationPlayer1.NbrCarts=len(Game.winnings_player1)
+    Game.EvaluationPlayer2.NbrCarts=len(Game.winnings_player2)
     # septCareau
     for item in Game.winnings_player1:
-        if(item.Nbr == "sept" and item.Type=="Careau"):
+        if(item.Nbr == "sept" and item.Type=="careau"):
             Game.EvaluationPlayer1.septCareau=True
             # continue COUNTING SCORE
             scoreP1+=1
             
     if(Game.EvaluationPlayer1.septCareau==False):
         for item in Game.winnings_player2:
-            if(item.Nbr == "sept" and item.Type=="Careau"):
+            if(item.Nbr == "sept" and item.Type=="careau"):
                 Game.EvaluationPlayer2.septCareau=True
                 # continue COUNTING SCORE
                 scoreP2+=1
@@ -155,23 +160,27 @@ def Evaluation(Game):
         scoreP2+=1
     if(Game.EvaluationPlayer1.Nbr7s >Game.EvaluationPlayer2.Nbr7s):
         scoreP1+=1
-    elif(Game.EvaluationPlayer1.Nbr7s >Game.EvaluationPlayer2.Nbr7s):
+    elif(Game.EvaluationPlayer1.Nbr7s <Game.EvaluationPlayer2.Nbr7s):
         scoreP2+=1
     else:
         if(Game.EvaluationPlayer1.Nbr6s >Game.EvaluationPlayer2.Nbr6s):
             scoreP1+=1
-        elif(Game.EvaluationPlayer1.Nbr6s >Game.EvaluationPlayer2.Nbr6s):
+        elif(Game.EvaluationPlayer1.Nbr6s <Game.EvaluationPlayer2.Nbr6s):
             scoreP2+=1
-            
-    print(f"Score J1 : {scoreP1}")
-    print(f"Score J2 : {scoreP2}")
-    print(f"le Gagnant est...")
+    scoreP1+=Game.EvaluationPlayer1.NbrChkobas
+    scoreP2+=Game.EvaluationPlayer2.NbrChkobas
+    print(f"\n[...Analayse J1 ] = Cartes: {Game.EvaluationPlayer1.NbrCarts}/cept-careau : {Game.EvaluationPlayer1.septCareau} /les 7 : {Game.EvaluationPlayer1.Nbr7s}/les 6 : {Game.EvaluationPlayer1.Nbr6s} /Chkobas :{Game.EvaluationPlayer1.NbrChkobas}")
+    print(f"\n[...Analayse J2 ] = Cartes: {Game.EvaluationPlayer2.NbrCarts}/cept-careau : {Game.EvaluationPlayer2.septCareau} /les 7 : {Game.EvaluationPlayer2.Nbr7s}/les 6 : {Game.EvaluationPlayer2.Nbr6s}/Chkobas :{Game.EvaluationPlayer2.NbrChkobas}")
+    
+    print(f"\nScore J1 : {scoreP1}")
+    print(f"\nScore J2 : {scoreP2}")
+    print(f"\nle Gagnant est...")
     winner =""
     if(scoreP1>scoreP2):
         winner="J1"
     else:
         winner="J2"
-    print(winner)
+    print(f"\n{winner}")
     
         
             

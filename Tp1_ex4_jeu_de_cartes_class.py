@@ -18,11 +18,11 @@ for cartNbr in ["as", "deux", "trois", "quatre", "cinq", "six", "sept", "valet",
         
         
 
-PlayCarte.PrintCarts(Game.carts,"tous")
+# PlayCarte.PrintCarts(Game.carts,"tous")
 
 print(f"\nmelange...")
 Game.carts = PlayCarte.Shuffle(Game.carts)
-PlayCarte.PrintCarts(Game.carts,"tous les Cartes mixé")
+# PlayCarte.PrintCarts(Game.carts,"tous les Cartes mixé")
 
 result = PlayCarte.GetCartForTable(Game.carts)
 Game.carts = result["ALL"]
